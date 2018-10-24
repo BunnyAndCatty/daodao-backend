@@ -1,4 +1,4 @@
-﻿# 前端接口部分
+# 前端接口部分
 
 > 鉴权说明： 凡是没有标明```无需鉴权```的接口，均需在header中带有token来进行访问
 
@@ -97,5 +97,5 @@ Array of:
 |billingId|number|账单ID|
 |imageUrl|String|照片url|
 |comment|String|备注|
-|date|String|所属日期 YYYYMMDD格式|
+|date|String|所属日期 YYYY-MM-DD格式|
 
