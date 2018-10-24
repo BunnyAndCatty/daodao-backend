@@ -29,7 +29,7 @@
 
 |参数名|数据类型|说明|
 |---|---|---|
-|code|String|前端通过wx.login()拿到的临时登录凭票
+|code|String|前端通过wx.login()拿到的临时登录凭票|
 
 响应参数
 
@@ -46,3 +46,56 @@
 |-45011|登录过于频繁|
 
 ## 记账部分
+
+### GET /cashbook/record/list
+
+用于获取账户下的所有账单
+
+响应参数
+
+Array of: 
+
+|参数名|数据类型|说明|
+|---|---|---|
+|id|Number|账单id|
+|name|String|账单名字|
+|avatar|String|头像图片URL|
+|type|Number|账单类型 0-私人账单 1-共享账单|
+
+### GET /cashbook/record/member
+
+用于获取共享账单中的成员
+
+请求参数
+
+|参数名|数据类型|说明|
+|---|---|---|
+|billingId|number|账单ID|
+
+响应参数
+
+Array of: 
+
+|参数名|数据类型|说明|
+|---|---|---|
+|userId|Number|用户id|
+|name|String|用户名|
+|avatar|String|头像图片URL|
+|identity|Number|用户身份 0-管理员 1-成员|
+
+### POST /cashbook/record/action
+
+记账
+
+请求参数
+
+|参数名|数据类型|说明|
+|---|---|---|
+|action|number|动作 0-支出 1-收入|
+|balance|number|金额|
+|tagId|number|标签|
+|billingId|number|账单ID|
+|imageUrl|String|照片url|
+|comment|String|备注|
+|date|String|所属日期 YYYYMMDD格式|
+
