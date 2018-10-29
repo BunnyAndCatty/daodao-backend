@@ -6,8 +6,9 @@
   "dependencies": {
     "egg": "^2.2.1",
     "egg-mysql": "^3.0.0",
+    "egg-redis": "^2.0.0",
     "egg-scripts": "^2.5.0",
-    "request": "^2.88.0"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",
