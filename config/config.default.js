@@ -43,5 +43,9 @@ module.exports = appInfo => {
     agent: false,
   }
 
+  config.token = {
+    expireDuration: 30 * 3600 * 1000
+  }
+
   return config;
 };

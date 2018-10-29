@@ -13,7 +13,7 @@ module.exports = options => async function (ctx, next) {
   ctx.Error = class CustomError extends Error {
     constructor(code, message) {
       super(message || '');
-      this.code = code || 0;
+      this.code = code || -1;
       this.message = message || '';
     }
   };
@@ -22,20 +22,18 @@ module.exports = options => async function (ctx, next) {
     await next();
   }
   catch(error) {
-    const errorDesc = errorMap[error.code];
-    if(!errorDesc) {
-      ctx.status = 500;
-      ctx.body = {
-        code: -1,
-        message: '未知错误',
-        traceId: ctx.traceId
-      }
-      return;
+    const errorDesc = errorMap[error.code] || {
+      code: 500,
+      message: '未知错误'
     }
     ctx.status = errorDesc.code || 500;
     ctx.body = {
       code: error.code || -2,
       message: errorDesc.message || null,
+      error: {
+        message: error.message,
+        stack: error.stack
+      },
       traceId: ctx.traceId
     };
   }
