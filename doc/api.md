@@ -30,6 +30,8 @@
 |参数名|数据类型|说明|
 |---|---|---|
 |code|String|前端通过wx.login()拿到的临时登录凭票|
+|encryptedData|String|前端通过wx.getUserInfo()拿到的加密敏感数据|
+|iv|String|前端通过wx.getUserInfo()拿到的向量|
 
 响应参数
 
