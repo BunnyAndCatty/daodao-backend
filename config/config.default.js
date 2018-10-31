@@ -5,6 +5,7 @@ const secret = require('../secret');
 module.exports = appInfo => {
   const config = exports = {};
 
+  // Cookies配置
   config.keys = appInfo.name + '_1540379430916_4886';
 
   // 中间件配置
@@ -43,8 +44,15 @@ module.exports = appInfo => {
     agent: false,
   }
 
+  // 令牌配置
   config.token = {
     expireDuration: 30 * 3600 * 1000
+  }
+
+  config.auth = {
+    whileList: [
+      '/'
+    ]
   }
 
   return config;
