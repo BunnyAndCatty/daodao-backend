@@ -10,8 +10,9 @@ module.exports = appInfo => {
 
   // 中间件配置
   config.middleware = [
-    'error',
-    'trace'
+    'error',  // 错误处理
+    'auth',   // 鉴权
+    'trace'   // 请求跟踪
   ];
 
   // 微信相关配置
@@ -44,14 +45,13 @@ module.exports = appInfo => {
     agent: false,
   }
 
-  // 令牌配置
-  config.token = {
-    expireDuration: 30 * 3600 * 1000
-  }
-
+  // 鉴权配置
   config.auth = {
+    // 令牌有效期
+    expireDuration: 30 * 3600 * 1000,
+    // 无需鉴权的API列表
     whileList: [
-      '/'
+      '/account/login'
     ]
   }
 

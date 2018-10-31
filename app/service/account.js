@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 var WXBizDataCrypt = require('../utils/WXBizDataCrypt');
 
 const ERROR_CODE_PREFIX = 1800000;
+const TABLE_NAME_IN_DATABASE = 'wechat_account';
 
 module.exports = class AccountService extends Service {
 
@@ -16,18 +17,10 @@ module.exports = class AccountService extends Service {
     const appId = this.app.config.wechat.appid;
     const appSecret = this.app.config.wechat.secret;
 
-    // const res = await this.ctx.curl(`https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&js_code=${jscode}&grant_type=authorization_code`, {
-    //   dataType: 'json',
-    //   timeout: 3000,
-    // });
-    const res = {
-      data: {
-        errcode: 0,
-        openid: '123',
-        unionid: '345',
-        session_key: '789'
-      }
-    }
+    const res = await this.ctx.curl(`https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&js_code=${jscode}&grant_type=authorization_code`, {
+      dataType: 'json',
+      timeout: 3000,
+    });
     const {data} = res;
     if(data.errcode !== 0) {
       throw new this.ctx.Error(ERROR_CODE_PREFIX + data.errcode, data.errmsg);
@@ -42,10 +35,10 @@ module.exports = class AccountService extends Service {
     const {nickName, avatarUrl} = userInfo;
 
     // 取数据库中已有的当前openid用户
-    const userInDatabase = await this.app.mysql.get('wechat_account', {openid});
+    const userInDatabase = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {openid});
     // 未注册用户创建账户
     if(!userInDatabase) {
-      await this.app.mysql.insert('wechat_account', {
+      await this.app.mysql.insert(TABLE_NAME_IN_DATABASE, {
         openid,
         unionid,
         nickname: nickName,
@@ -56,7 +49,7 @@ module.exports = class AccountService extends Service {
     
     // 用户信息发生变化
     if(userInDatabase.userinfo_raw_data !== userInfoString) {
-      await this.app.mysql.update('wechat_account', {
+      await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
         nickname: nickName,
         avatar: avatarUrl,
         userinfo_raw_data: userInfoString
@@ -78,10 +71,10 @@ module.exports = class AccountService extends Service {
     else {
       // 无未过期token，签发token
       token = uuidv1();
-      tokenExpire = Date.now() + this.app.config.token.expireDuration;
+      tokenExpire = Date.now() + this.app.config.auth.expireDuration;
 
       // 更新数据库中的Token
-      await this.app.mysql.update('wechat_account', {
+      await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
         token,
         token_expire_time: tokenExpire
       }, {
@@ -103,11 +96,27 @@ module.exports = class AccountService extends Service {
   }
 
   /**
-   * 验证
+   * 验证Token
    * @param {String} token 令牌
+   * @returns {Object|null} 授权信息实体 包含{openid, unionid, session_key}
    */
   async verify(token) {
-    const userEntity = this.app.redis.get(`TOKEN:${token}`);
-    return userEntity ? JSON.parse(userEntity) : null;
+    const authEntity = await this.app.redis.get(`TOKEN:${token}`);
+    return authEntity ? JSON.parse(authEntity) : null;
+  }
+
+  /**
+   * 获取用户信息
+   * @param {String} openid OpenID
+   * @returns {Object|null} 用户信息实体 包含{openid, unionid, nickname, avatar, create_time, userinfo_raw_data}
+   */
+  async getUserInfo(openid) {
+    const userEntity = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {
+      where: {openid},
+      columns: ['openid', 'unionid', 'nickname', 'avatar', 'create_time', 'userinfo_raw_data']
+    });
+    if(!userEntity) return null;
+    userEntity.userinfo_raw_data = JSON.parse(userEntity.userinfo_raw_data);
+    return userEntity;
   }
 }

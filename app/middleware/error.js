@@ -6,20 +6,32 @@ const errorMap = {
   1845011: {
     message: '登录过于频繁',
     code: 400
+  },
+  401: {
+    message: '鉴权失败或缺少鉴权字段',
+    code: 401
+  },
+  404: {
+    message: '未知资源',
+    code: 404
   }
 };
 
 module.exports = options => async function (ctx, next) {
   ctx.Error = class CustomError extends Error {
-    constructor(code, message) {
-      super(message || '');
-      this.code = code || -1;
-      this.message = message || '';
+    constructor(code = -1, message = '') {
+      super(message);
+      this.code = code;
+      this.message = message;
     }
   };
 
   try {
     await next();
+
+    if (ctx.status === 404 && !ctx.body) {
+      throw new ctx.Error(404);
+    }
   }
   catch(error) {
     const errorDesc = errorMap[error.code] || {
