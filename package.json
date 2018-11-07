@@ -24,7 +24,7 @@
     "node": ">=8.9.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=daodao --port=8000",
+    "start": "egg-scripts start --daemon --title=daodao --port=8080",
     "stop": "egg-scripts stop --title=daodao",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
