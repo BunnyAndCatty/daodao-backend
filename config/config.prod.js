@@ -1,3 +1,5 @@
+const secret = require('../secret');
+
 module.exports = appInfo => {
   const config = exports = {};
 

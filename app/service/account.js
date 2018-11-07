@@ -10,10 +10,8 @@ module.exports = class AccountService extends Service {
   /**
    * 登录
    * @param {String} jscode 临时登录凭票
-   * @param {String} encryptedData 加密数据
-   * @param {String} iv 向量
    */
-  async login(jscode, encryptedData, iv) {
+  async login(jscode) {
     const appId = this.app.config.wechat.appid;
     const appSecret = this.app.config.wechat.secret;
 
@@ -26,18 +24,13 @@ module.exports = class AccountService extends Service {
       throw new this.ctx.Error(ERROR_CODE_PREFIX + data.errcode, data.errmsg);
     }
     const {openid, unionid, session_key} = data;
-
-    // 解密敏感数据
-    const wxBizDataCrypt = new WXBizDataCrypt(appId, session_key);
-    const userInfo = wxBizDataCrypt.decryptData(encryptedData , iv);
-    userInfo.watermark = null;
-    const userInfoString = JSON.stringify(userInfo);
-    const {nickName, avatarUrl} = userInfo;
+    let isNewUser = false;
 
     // 取数据库中已有的当前openid用户
     const userInDatabase = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {openid});
     // 未注册用户创建账户
     if(!userInDatabase) {
+      isNewUser = true;
       await this.app.mysql.insert(TABLE_NAME_IN_DATABASE, {
         openid,
         unionid,
@@ -47,19 +40,6 @@ module.exports = class AccountService extends Service {
       });
     }
     
-    // 用户信息发生变化
-    if(userInDatabase.userinfo_raw_data !== userInfoString) {
-      await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
-        nickname: nickName,
-        avatar: avatarUrl,
-        userinfo_raw_data: userInfoString
-      }, {
-        where: {
-          openid
-        }
-      });
-    }
-
     // 检测是否有未过期的token
     const currentToken = await this.app.redis.get(`OPENID:${openid}`);
     let token, tokenExpire;
@@ -92,7 +72,44 @@ module.exports = class AccountService extends Service {
       }), 'EX', parseInt(tokenExpire/1000, 10));
     }
 
-    return {token};
+    return {token, isNewUser};
+  }
+
+  /**
+   * 更新用户信息
+   * @param {String} token 登录秘钥
+   * @param {String} session_key 会话秘钥
+   * @param {String} encryptedData 加密数据
+   * @param {String} iv 向量
+   * @returns {Boolean} 是否更新了用户信息
+   */
+  async updateUserInfo(openid, session_key, encryptedData, iv) {
+
+    // 解密敏感数据
+    const wxBizDataCrypt = new WXBizDataCrypt(appId, session_key);
+    const userInfo = wxBizDataCrypt.decryptData(encryptedData , iv);
+    userInfo.watermark = null;
+    const userInfoString = JSON.stringify(userInfo);
+    const {nickName, avatarUrl} = userInfo;
+
+    // 取数据库中已有的当前openid用户
+    const userInDatabase = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {openid});
+    // 用户信息发生变化
+    if(userInDatabase.userinfo_raw_data !== userInfoString) {
+      await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
+        nickname: nickName,
+        avatar: avatarUrl,
+        userinfo_raw_data: userInfoString
+      }, {
+        where: {
+          openid
+        }
+      });
+      return true
+    }
+    else {
+      return false;
+    }
   }
 
   /**
