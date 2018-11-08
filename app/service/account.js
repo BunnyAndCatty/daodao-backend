@@ -10,6 +10,7 @@ module.exports = class AccountService extends Service {
   /**
    * 登录
    * @param {String} jscode 临时登录凭票
+   * @returns {Object} token-登录凭票 isNewUser-是否为新用户 openid-微信用户标识
    */
   async login(jscode) {
     const appId = this.app.config.wechat.appid;
@@ -72,7 +73,7 @@ module.exports = class AccountService extends Service {
       }), 'EX', parseInt(tokenExpire/1000, 10));
     }
 
-    return {token, isNewUser};
+    return {token, isNewUser, openid};
   }
 
   /**

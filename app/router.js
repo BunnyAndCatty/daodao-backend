@@ -9,4 +9,7 @@ module.exports = app => {
 
   router.get('/account/login', controller.account.login);
   router.get('/account/updateUserInfo', controller.account.updateUserInfo);
+
+  router.get('/bill/create', controller.bill.createBill);
+  router.get('/bill/recordTag', controller.bill.getAllRecordTag);
 };

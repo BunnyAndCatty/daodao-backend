@@ -26,6 +26,12 @@ module.exports = options => async function (ctx, next) {
     }
   };
 
+  ctx.success = () => {
+    ctx.body = {
+      code: 0
+    };
+  };
+
   try {
     await next();
 
