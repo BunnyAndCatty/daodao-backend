@@ -60,15 +60,15 @@ module.exports = class AccountService extends Service {
           openid
         }
       });
-
-      // 更新RedisToken
-      await this.app.redis.set(`TOKEN:${token}`, JSON.stringify({
-        openid, unionid, session_key
-      }), 'EX', parseInt(tokenExpire/1000, 10));
-      await this.app.redis.set(`OPENID:${openid}`, JSON.stringify({
-        token, unionid, session_key
-      }), 'EX', parseInt(tokenExpire/1000, 10));
     }
+
+    // 更新RedisToken
+    await this.app.redis.set(`TOKEN:${token}`, JSON.stringify({
+      openid, unionid, session_key
+    }), 'EX', parseInt(tokenExpire/1000, 10));
+    await this.app.redis.set(`OPENID:${openid}`, JSON.stringify({
+      token, unionid, session_key
+    }), 'EX', parseInt(tokenExpire/1000, 10));
 
     return {token, isNewUser, openid};
   }
