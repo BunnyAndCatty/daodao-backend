@@ -7,6 +7,10 @@ const errorMap = {
     message: '登录过于频繁',
     code: 400
   },
+  1840163: {
+    message: 'code已经使用',
+    code: 400
+  },
   401: {
     message: '鉴权失败或缺少鉴权字段',
     code: 401
