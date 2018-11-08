@@ -40,6 +40,7 @@ module.exports = options => async function (ctx, next) {
     }
   }
   catch(error) {
+    console.log(error);
     const errorDesc = errorMap[error.code] || {
       code: 500,
       message: '未知错误'
