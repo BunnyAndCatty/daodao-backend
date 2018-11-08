@@ -21,7 +21,7 @@ module.exports = class AccountService extends Service {
       timeout: 3000,
     });
     const {data} = res;
-    if(data.errcode !== 0) {
+    if(data.errcode && data.errcode !== 0) {
       throw new this.ctx.Error(ERROR_CODE_PREFIX + data.errcode, data.errmsg);
     }
     const {openid, unionid, session_key} = data;
@@ -35,9 +35,6 @@ module.exports = class AccountService extends Service {
       await this.app.mysql.insert(TABLE_NAME_IN_DATABASE, {
         openid,
         unionid,
-        nickname: nickName,
-        avatar: avatarUrl,
-        userinfo_raw_data: userInfoString,
       });
     }
     
