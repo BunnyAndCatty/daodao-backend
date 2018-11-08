@@ -13,7 +13,6 @@ module.exports = class BillController extends Controller {
 
   async getAllRecordTag() {
     const tags = await this.ctx.service.bill.getAllRecordTag();
-    console.log(tags);
     const tree = tags.reduce((obj, item) => {
       const parent = obj[item.parent_id];
       if(parent) parent.items = parent.items.concat(item);
