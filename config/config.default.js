@@ -50,7 +50,7 @@ module.exports = appInfo => {
     // 令牌有效期
     expireDuration: 30 * 3600 * 1000,
     // 无需鉴权的API列表
-    whileList: [
+    whiteList: [
       '/account/login'
     ]
   }
