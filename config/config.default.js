@@ -55,5 +55,12 @@ module.exports = appInfo => {
     ]
   }
 
+  // CSRF防护关闭
+  config.security = {
+    csrf: {
+      enable: false,
+    },
+  };
+
   return config;
 };

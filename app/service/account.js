@@ -82,6 +82,7 @@ module.exports = class AccountService extends Service {
    * @returns {Boolean} 是否更新了用户信息
    */
   async updateUserInfo(openid, session_key, encryptedData, iv) {
+    const appId = this.app.config.wechat.appid;
 
     // 解密敏感数据
     const wxBizDataCrypt = new WXBizDataCrypt(appId, session_key);
