@@ -40,7 +40,8 @@ module.exports = class AccountService extends Service {
     
     // 检测是否有未过期的token
     const currentToken = await this.app.redis.get(`OPENID:${openid}`);
-    let token, tokenExpire;
+    let token;
+    const tokenExpire = Date.now() + this.app.config.auth.expireDuration;
     if(currentToken) {
       // 命中未过期的token
       const currentTokenEntity = JSON.parse(currentToken);
@@ -49,7 +50,6 @@ module.exports = class AccountService extends Service {
     else {
       // 无未过期token，签发token
       token = uuidv1();
-      tokenExpire = Date.now() + this.app.config.auth.expireDuration;
 
       // 更新数据库中的Token
       await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
