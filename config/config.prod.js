@@ -6,8 +6,8 @@ module.exports = appInfo => {
   // Redis配置
   config.redis = {
     client: {
-      port: 6379,
-      host: '172.17.0.3',
+      port: 32270,
+      host: '127.0.0.1',
       password: '',
       db: 0,
     },
@@ -16,8 +16,8 @@ module.exports = appInfo => {
   // 数据库配置
   config.mysql = {
     client: {
-      host: '172.17.0.4',
-      port: '3306',
+      host: '127.0.0.1',
+      port: '32768',
       user: 'root',
       password: secret.mysql.password,
       database: 'daodao',
