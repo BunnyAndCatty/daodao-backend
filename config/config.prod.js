@@ -6,7 +6,7 @@ module.exports = appInfo => {
   // Redis配置
   config.redis = {
     client: {
-      port: 32270,
+      port: 32770,
       host: '127.0.0.1',
       password: '',
       db: 0,
