@@ -4,6 +4,7 @@
   "description": "",
   "private": true,
   "dependencies": {
+    "download": "^7.1.0",
     "egg": "^2.2.1",
     "egg-mysql": "^3.0.0",
     "egg-redis": "^2.0.0",

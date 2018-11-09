@@ -11,3 +11,4 @@ run/
 *.sw*
 *.un~
 secret.js
+static/

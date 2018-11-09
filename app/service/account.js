@@ -98,6 +98,7 @@ module.exports = class AccountService extends Service {
       await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
         nickname: nickName,
         avatar: avatarUrl,
+        avatar_local: '',
         userinfo_raw_data: userInfoString
       }, {
         where: {
@@ -129,10 +130,33 @@ module.exports = class AccountService extends Service {
   async getUserInfo(openid) {
     const userEntity = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {
       where: {openid},
-      columns: ['openid', 'unionid', 'nickname', 'avatar', 'create_time', 'userinfo_raw_data']
+      columns: ['openid', 'unionid', 'nickname', 'avatar', 'avatar_local', 'create_time', 'userinfo_raw_data']
     });
     if(!userEntity) return null;
     userEntity.userinfo_raw_data = JSON.parse(userEntity.userinfo_raw_data);
     return userEntity;
+  }
+
+  /**
+   * 获取所有头像未缓存到本地的账户信息
+   */
+  async getUnLocalizeAccount() {
+    const list = await this.app.mysql.query(
+      'Select openid, avatar From wechat_account Where ISNULL(avatar_local) AND NOT ISNULL(avatar);'
+    );
+    return list;
+  }
+
+  /**
+   * 更新本地头像
+   * @param {String} openid 唯一标示
+   * @param {String} path 本地化链接
+   */
+  async updateLocalAvatar(openid, path) {
+    return this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
+      avatar_local: path
+    }, {
+      where: {openid}
+    });
   }
 }
