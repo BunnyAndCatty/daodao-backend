@@ -6,8 +6,8 @@ module.exports = class DownloadWechatAvatar extends Subscription {
   
   static get schedule() {
     return {
-      interval: '1h', // 1 分钟间隔
-      type: 'worker', // 指定所有的 worker 都需要执行
+      interval: '1h', // 1小时运行一次
+      type: 'worker', // cluster中只有一个进程运行
       env: ['prod']
     };
   }

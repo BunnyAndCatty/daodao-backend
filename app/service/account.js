@@ -98,7 +98,7 @@ module.exports = class AccountService extends Service {
       await this.app.mysql.update(TABLE_NAME_IN_DATABASE, {
         nickname: nickName,
         avatar: avatarUrl,
-        avatar_local: '',
+        avatar_local: null,
         userinfo_raw_data: userInfoString
       }, {
         where: {
