@@ -15,6 +15,10 @@ module.exports = appInfo => {
     'trace'   // 请求跟踪
   ];
 
+  config.host = {
+    static: 'https://api.zh-yu.com/static'
+  };
+
   // 微信相关配置
   config.wechat = {
     server: 'https://api.weixin.qq.com',
@@ -43,6 +47,17 @@ module.exports = appInfo => {
     },
     app: true,
     agent: false,
+  }
+
+  // 消息队列
+  config.queue = {
+    register: false,
+    listen: 7002,
+    prefix: 'kuequeue',
+    redis: {
+      ...config.redis.client,
+      db: 1
+    }
   }
 
   // 鉴权配置

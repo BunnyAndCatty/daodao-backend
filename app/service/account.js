@@ -128,10 +128,7 @@ module.exports = class AccountService extends Service {
    * @returns {Object|null} 用户信息实体 包含{openid, unionid, nickname, avatar, create_time, userinfo_raw_data}
    */
   async getUserInfo(openid) {
-    const userEntity = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {
-      where: {openid},
-      columns: ['openid', 'unionid', 'nickname', 'avatar', 'avatar_local', 'create_time', 'userinfo_raw_data']
-    });
+    const userEntity = await this.app.mysql.get(TABLE_NAME_IN_DATABASE, {openid});
     if(!userEntity) return null;
     userEntity.userinfo_raw_data = JSON.parse(userEntity.userinfo_raw_data);
     return userEntity;

@@ -16,4 +16,15 @@ module.exports = class AccountController extends Controller {
     await this.service.account.updateUserInfo(openid, session_key, encryptedData, iv);
     this.ctx.success();
   }
+
+  async getUserInfo() {
+    const {openid} = this.ctx.auth;
+    const userEntity = await this.service.account.getUserInfo(openid);
+    this.ctx.body = {
+      nickname: userEntity.nickname,
+      avatar: userEntity.avatar_local ? `${this.app.config.host.static}/${userEntity.avatar_local}` : userEntity.avatar,
+      create_time: userEntity.create_time,
+      gender: userEntity.userinfo_raw_data.gender
+    };
+  }
 }

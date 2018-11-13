@@ -26,5 +26,16 @@ module.exports = appInfo => {
     agent: false,
   }
 
+  // 消息队列
+  config.queue = {
+    register: false,
+    listen: 7002,
+    prefix: 'kuequeue',
+    redis: {
+      ...config.redis.client,
+      db: 1
+    }
+  }
+
   return config;
 };

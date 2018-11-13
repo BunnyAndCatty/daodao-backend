@@ -21,4 +21,12 @@ module.exports = class BillController extends Controller {
     }, {});
     this.ctx.body = Object.values(tree);
   }
+
+  async getMyBill() {
+    const {openid} = this.ctx.auth;
+    this.ctx.body = await this.service.bill.getMyBill(openid);
+  }
+
+  async getMemberByBill() {
+  }
 }
